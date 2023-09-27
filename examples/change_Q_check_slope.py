@@ -31,7 +31,7 @@ _Q = 50 * np.ones(len(lp.x))
 _Q[120:] = 100.
 lp.set_Q(_Q)
 lp.set_B(100)
-lp.set_niter(1)
+lp.set_niter(3)
 lp.set_z_bl(z1)
 Qs0 = lp.k_Qs * lp.Q[0] * S0**(7/6.)
 lp.set_Qs_input_upstream(Qs0)
@@ -51,6 +51,10 @@ ax1.plot(lp.x/1000., lp.z - lp.z[0] + 500, color='.5', linewidth=3)
 """
 
 S_predicted = S0 * (_Q[0]/_Q[-1])**(6/7.)
-print( (np.diff(lp.z) / np.diff(lp.x))[-1] )
+S_obs = -(np.diff(lp.z) / np.diff(lp.x))[-1]
 
-print( S_predicted)
+print( S_predicted )
+print( S_obs )
+
+print( "Obs/Pred:", S_obs/S_predicted )
+
