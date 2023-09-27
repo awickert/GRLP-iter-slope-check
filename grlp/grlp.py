@@ -181,7 +181,9 @@ class LongProfile(object):
         # See Eq. D3 in Wickert & Schildgen (2019)
         # This then combines with the 1/4 factor in the coefficients
         # for the stencil that results from (2*dx)**2
-        self.dQ = Q_ext[2:] - Q_ext[:-2]
+        # self.dQ = Q_ext[2:] - Q_ext[:-2]
+        # Update to upwind
+        self.dQ = Q_ext[1:-1] - Q_ext[:-2]
         # Keep sediment supply tied to water supply, except
         # by changing S_0, to only turn one knob for one change (Q/Qs)
         if update_Qs_input:
@@ -303,7 +305,10 @@ class LongProfile(object):
     def set_bcr_Dirichlet(self):
         self.bcr = self.z_bl * ( self.C1[-1] * 7/3. \
                        * (1/self.dx_ext[-2] + 1/self.dx_ext[-1])/2. \
-                       + self.dQ[-1]/self.Q[-1] )
+                       + 2*self.dQ[-1]/self.Q[-1] ) # New dQ over 1*dx
+                       #+ self.dQ[-1]/self.Q[-1] ) # old dQ over 2*dx
+                       # This 2* change made no difference
+                       # I guess self.z_bl is already 0!
 
     def set_bcl_Neumann_RHS(self):
         """
@@ -322,7 +327,8 @@ class LongProfile(object):
         # 2*dx * S_0 * left_coefficients
         self.bcl = self.dx_ext_2cell[0] * self.S0 * \
                             - self.C1[0] * ( 7/3./self.dx_ext[0]
-                            - self.dQ[0]/self.Q[0]/self.dx_ext_2cell[0] )
+                            - self.dQ[0]/self.Q[0]/self.dx_ext[0] )
+                            #- self.dQ[0]/self.Q[0]/self.dx_ext_2cell[0] )
 
     def set_bcl_Neumann_LHS(self):
         """
@@ -391,13 +397,15 @@ class LongProfile(object):
         """
         self.compute_coefficient_time_varying()
         self.left = -self.C1 * ( (7/3.)/self.dx_ext[:-1]
-                        - self.dQ/self.Q/self.dx_ext_2cell )
+                        - self.dQ/self.Q/self.dx_ext[:-1] )
+                        #- self.dQ/self.Q/self.dx_ext_2cell )
         self.center = -self.C1 * ( (7/3.) \
                               * (-1/self.dx_ext[:-1] \
                                  -1/self.dx_ext[1:]) ) \
                                  + 1.
         self.right = -self.C1 * ( (7/3.)/self.dx_ext[1:] # REALLY?
-                        + self.dQ/self.Q/self.dx_ext_2cell )
+                        + self.dQ/self.Q/self.dx_ext[:-1] )
+                        #+ self.dQ/self.Q/self.dx_ext_2cell )
         # Apply boundary conditions if the segment is at the edges of the
         # network (both if there is only one segment!)
         if len(self.upstream_segment_IDs) == 0:
