@@ -279,23 +279,6 @@ class LongProfile(object):
         self.dzdx_0_16_upwind = np.abs( (self.z_ext[1:-1] - self.z_ext[:-2]) \
                          / self.dx_ext[:-1] )**(1/6.)
         self.C1_upwind = self.C0 * self.dzdx_0_16 * self.Q / self.B
-        # Handling C1 for networked rivers
-        # Need to link the two segments without skipping the channel head
-        # DOESN'T SEEM TO CHANGE ANYTHING!
-        # Looks right when both are 0! Any accidental inclusion of its own
-        # ghost-node Qs,in?
-        if len(self.downstream_segment_IDs) > 0:
-            self.C1[-1] = self.C0[-1] \
-                          * (np.abs(self.z_ext[-2] - self.z_ext[-1]) \
-                                   /self.dx[-1])**(1/6.) \
-                          * self.Q[-1] / self.B[-1]
-        # This one matters! The above doesn't!!!! (Maybe.)
-        # WORK HERE. If turns to 0, fixed. But why? Stays at initial profile?
-        if len(self.upstream_segment_IDs) > 0:
-            self.C1[0] = self.C0[0] \
-                          * (np.abs(self.z_ext[1] - self.z_ext[0]) \
-                                   /self.dx[0])**(1/6.) \
-                          * self.Q[0] / self.B[0]
 
     def set_z_bl(self, z_bl):
         """
