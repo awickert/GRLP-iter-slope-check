@@ -312,6 +312,8 @@ class LongProfile(object):
         """
         # Give upstream cell the same width as the first cell in domain
         # 2*dx * S_0 * left_coefficients
+        # !!!!!!!!!!!!!! dQ concern, but since it is 0 here,
+        # then it doesn't matter
         self.bcl = self.dx_ext_2cell[0] * self.S0 * \
                             - self.C1[0] * ( 7/3./self.dx_ext[0]
                             - self.dQ[0]/self.Q[0]/self.dx_ext[0] )

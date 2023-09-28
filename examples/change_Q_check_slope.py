@@ -50,9 +50,11 @@ plt.tight_layout()
 ax1.plot(lp.x/1000., lp.z - lp.z[0] + 500, color='.5', linewidth=3)
 """
 
+S_upstream = -(np.diff(lp.z) / np.diff(lp.x))[0]
 S_predicted = S0 * (_Q[0]/_Q[-1])**(6/7.)
 S_obs = -(np.diff(lp.z) / np.diff(lp.x))[-1]
 
+print( S_upstream )
 print( S_predicted )
 print( S_obs )
 
