@@ -289,6 +289,7 @@ class LongProfile(object):
         self.z_ext[-1] = self.z_bl
 
     def set_bcr_Dirichlet(self):
+        # !!!!!!!!!! Should dQ/Q be inside C1 parens?
         self.bcr = self.z_bl * ( self.C1[-1] * 7/3. \
                        * (1/self.dx_ext[-2] + 1/self.dx_ext[-1])/2. \
                        + 2*self.dQ[-1]/self.Q[-1] ) # New dQ over 1*dx
