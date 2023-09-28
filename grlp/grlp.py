@@ -276,6 +276,9 @@ class LongProfile(object):
         self.dzdx_0_16 = np.abs( (self.z_ext[2:] - self.z_ext[:-2]) \
                          / self.dx_ext_2cell )**(1/6.)
         self.C1 = self.C0 * self.dzdx_0_16 * self.Q / self.B
+        self.dzdx_0_16_upwind = np.abs( (self.z_ext[1:-1] - self.z_ext[:-2]) \
+                         / self.dx_ext[:-1] )**(1/6.)
+        self.C1_upwind = self.C0 * self.dzdx_0_16 * self.Q / self.B
         # Handling C1 for networked rivers
         # Need to link the two segments without skipping the channel head
         # DOESN'T SEEM TO CHANGE ANYTHING!
