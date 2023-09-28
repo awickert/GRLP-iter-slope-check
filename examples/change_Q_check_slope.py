@@ -58,3 +58,11 @@ print( S_obs )
 
 print( "Obs/Pred:", S_obs/S_predicted )
 
+"""
+Upwind dQ
+Obs/Pred: 1.1721129772825727
+
+Centered dQ
+Obs/Pred: 0.9452524010345046
+"""
+
