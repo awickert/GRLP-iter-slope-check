@@ -278,7 +278,7 @@ class LongProfile(object):
         self.C1 = self.C0 * self.dzdx_0_16 * self.Q / self.B
         self.dzdx_0_16_upwind = np.abs( (self.z_ext[1:-1] - self.z_ext[:-2]) \
                          / self.dx_ext[:-1] )**(1/6.)
-        self.C1_upwind = self.C0 * self.dzdx_0_16_upwind * self.Q / self.B
+        self.C1_upwind = self.C0_upwind * self.dzdx_0_16_upwind * self.Q / self.B
 
     def set_z_bl(self, z_bl):
         """
@@ -379,6 +379,9 @@ class LongProfile(object):
         self.C0 = self.k_Qs * self.intermittency \
                     / ((1-self.lambda_p) * self.sinuosity**(7/6.)) \
                     * self.dt / self.dx_ext_2cell
+        self.C0_upwind = self.k_Qs * self.intermittency \
+                    / ((1-self.lambda_p) * self.sinuosity**(7/6.)) \
+                    * self.dt / self.dx_ext[:-1]
 
     def build_matrices(self):
         """
@@ -386,14 +389,14 @@ class LongProfile(object):
         """
         self.compute_coefficient_time_varying()
         self.left = -self.C1 * (7/3.)/self.dx_ext[:-1] \
-                    + self.C1_upwind * self.dQ/self.Q/self.dx_ext[:-1]
+                    + self.C1 * self.dQ/self.Q/self.dx_ext[:-1]
                         #- self.dQ/self.Q/self.dx_ext_2cell )
         self.center = -self.C1 * ( (7/3.) \
                               * (-1/self.dx_ext[:-1] \
                                  -1/self.dx_ext[1:]) ) \
                                  + 1.
         self.right = -self.C1 * (7/3.)/self.dx_ext[1:] \
-                     - self.C1_upwind * self.dQ/self.Q/self.dx_ext[:-1]
+                     - self.C1 * self.dQ/self.Q/self.dx_ext[:-1]
                         #+ self.dQ/self.Q/self.dx_ext_2cell )
         # Apply boundary conditions if the segment is at the edges of the
         # network (both if there is only one segment!)
